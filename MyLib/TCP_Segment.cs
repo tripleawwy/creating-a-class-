@@ -11,7 +11,7 @@ namespace Packets
         byte[] internTCPBuffer;
 
 
-        //MainInformation
+        //MainInformations
         public int sourcePort { get; private set; }
         public int destinationPort { get; private set; }
         public int sequenceNumber { get; private set; }
