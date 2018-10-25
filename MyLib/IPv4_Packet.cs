@@ -15,13 +15,17 @@ namespace Packets
         public byte[] ipPayload;
 
         //MainInformation
-        public string version { get; private set; }
-        public int headerLength { get; private set; }
-        public int totalpacketLength { get; private set; }
-        public int ttl { get; private set; }
-        public int protocol { get; private set; }
-        public string sourceIpAdress { get; private set; }
-        public string destIpAdress { get; private set; }
+        public string Version { get; private set; }
+        public int HeaderLength { get; private set; }
+        public int TotalpacketLength { get; private set; }
+        public int TTL { get; private set; }
+        public int Protocol { get; private set; }
+        public string SourceIpAdress { get; private set; }
+        public string DestIpAdress { get; private set; }
+        public bool IsTcP { get; private set; }
+        public TCP_Segment TCP_Segment;
+        public UDP_Datagram UDP_Datagram;
+
 
         //Not implemented yet  //TODO
         //private int typeOfService;
@@ -35,58 +39,81 @@ namespace Packets
         public IPv4_Packet(byte[] ethernetPayload)
         {
             ipv4Buffer = ethernetPayload;
-            setVersion();
-            setheaderLength();
-            setTotalLength();
-            setTTL();
-            setproto();
-            setSource();
-            setDest();
-            getIpPayload();
+            SetVersion();
+            SetheaderLength();
+            SetTotalLength();
+            SetTTL();
+            Setproto();
+            SetSource();
+            SetDest();
+            GetIpPayload();
+            IsTcp();
+
+            if (Protocol==6)
+            {
+                TCP_Segment = new TCP_Segment(ipPayload, Protocol);
+            }
+            if (Protocol == 17)
+            {
+                UDP_Datagram = new UDP_Datagram(ipPayload, Protocol);
+            }               
+                            
         }
 
-        private void getIpPayload()
+        private void IsTcp()
         {
-            ipPayload = new byte[totalpacketLength - headerLength];
-            for (int i = headerLength; i < totalpacketLength; i++)
+            if (Protocol==6)
             {
-                ipPayload[i - headerLength] = ipv4Buffer[i];
+                IsTcP = true;
+            }
+            else
+            {
+                IsTcP = false;
             }
         }
 
-        private void setDest()
+        private void GetIpPayload()
         {
-            destIpAdress = ipv4Buffer[16] + "." + ipv4Buffer[17] + "." + ipv4Buffer[18] + "." + ipv4Buffer[19];
+            ipPayload = new byte[TotalpacketLength - HeaderLength];
+            for (int i = HeaderLength; i < TotalpacketLength; i++)
+            {
+                ipPayload[i - HeaderLength] = ipv4Buffer[i];
+            }
         }
 
-        private void setSource()
+        private void SetDest()
         {
-            sourceIpAdress = ipv4Buffer[12] + "." + ipv4Buffer[13] + "." + ipv4Buffer[14] + "." + ipv4Buffer[15];
+            DestIpAdress = ipv4Buffer[16] + "." + ipv4Buffer[17] + "." + ipv4Buffer[18] + "." + ipv4Buffer[19];
         }
 
-        private void setproto()
+        private void SetSource()
         {
-            protocol = ipv4Buffer[9];
+            SourceIpAdress = ipv4Buffer[12] + "." + ipv4Buffer[13] + "." + ipv4Buffer[14] + "." + ipv4Buffer[15];
         }
 
-        private void setTTL()
+        private void Setproto()
         {
-            ttl = ipv4Buffer[8];
+            Protocol = ipv4Buffer[9];
         }
 
-        private void setTotalLength()
+        private void SetTTL()
         {
-            totalpacketLength = (ipv4Buffer[2] << 8) | (ipv4Buffer[3]);
+            TTL = ipv4Buffer[8];
         }
 
-        private void setheaderLength()
+        private void SetTotalLength()
         {
-            headerLength = (ipv4Buffer[0] & 15) * 4;
+            TotalpacketLength = (ipv4Buffer[2] << 8) | (ipv4Buffer[3]);
         }
 
-        private void setVersion()
+        private void SetheaderLength()
         {
-            version = "IPv" + (ipv4Buffer[0] >> 4);
+            HeaderLength = (ipv4Buffer[0] & 15) * 4;
+        }
+
+        private void SetVersion()
+        {
+            Version = "IPv" + (ipv4Buffer[0] >> 4);
         }
     }
 }

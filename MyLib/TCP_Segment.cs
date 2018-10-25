@@ -7,32 +7,32 @@ using System.Threading.Tasks;
 namespace Packets
 {
     public class TCP_Segment
-    {
+    {       
         //Incoming IP_Packet Payload
-        byte[] tcpBuffer;
+        private byte[] tcpBuffer;
 
         //Outgoing TCP_Segment Payload
         public byte[] tcpPayload;
 
         //MainInformation
-        public int sourcePort { get; private set; }
-        public int destinationPort { get; private set; }
-        public int sequenceNumber { get; private set; }
-        public int acknowledgmentNumber { get; private set; }
+        public int SourcePort { get; private set; }
+        public int DestinationPort { get; private set; }
+        public int SequenceNumber { get; private set; }
+        public int AcknowledgmentNumber { get; private set; }
 
         //HeaderLength instead of offset
         private int offset;
-        public int tcpHeaderLength { get; private set; }
+        public int TcpHeaderLength { get; private set; }
 
         //TCP Flags
-        public bool isReducedFlag { get; private set; }
-        public bool isEchoFlag { get; private set; }
-        public bool isUrgentFlag { get; private set; }
-        public bool isAckFlag { get; private set; }
-        public bool isPushFlag { get; private set; }
-        public bool isResetFlag { get; private set; }
-        public bool isSynFlag { get; private set; }
-        public bool isFinishedFlag { get; private set; }
+        public bool IsReducedFlag { get; private set; }
+        public bool IsEchoFlag { get; private set; }
+        public bool IsUrgentFlag { get; private set; }
+        public bool IsAckFlag { get; private set; }
+        public bool IsPushFlag { get; private set; }
+        public bool IsResetFlag { get; private set; }
+        public bool IsSynFlag { get; private set; }
+        public bool IsFinishedFlag { get; private set; }
 
         //not implemented yet // TODO
         //private int reserved;
@@ -42,180 +42,188 @@ namespace Packets
         //private int tcpOptions;
 
 
+             
 
 
-
-        public TCP_Segment(byte[] ipPayload, int protocolType)
-        {
-            if (protocolType == 6) // 6 = TCP
+        public TCP_Segment(byte[] ipPayload, int protocol)
+        {           
+            if (protocol == 6) // 6 = TCP
             {
-                tcpBuffer = ipPayload;
-                setSourcePort();
-                setDestPort();
-                setSeqNum();
-                setAckNum();
-                setHeaderLength();
-                setRedFlag();
-                setEchoFlag();
-                setUrgeFlag();
-                setAckFlag();
-                setPushFlag();
-                setResetFlag();
-                setSynFlag();
-                setFinFlag();
-                getTcpPayload();
+                if (ipPayload.Length >= 20)
+                {
+                    tcpBuffer = ipPayload;
+                    SetSourcePort();
+                    SetDestPort();
+                    SetSeqNum();
+                    SetAckNum();
+                    SetHeaderLength();
+                    SetRedFlag();
+                    SetEchoFlag();
+                    SetUrgeFlag();
+                    SetAckFlag();
+                    SetPushFlag();
+                    SetResetFlag();
+                    SetSynFlag();
+                    SetFinFlag();
+                    GetTcpPayload();
+                }
+                else
+                {
+                    throw new Exception("from class TCP_Segment: ungültiger ipPayload");
+                }
+
             }
             else
             {
-               
+                throw new Exception("from class TCP_Segment: is nicht tcp");
             }
         }
 
-        private void getTcpPayload()
+        private void GetTcpPayload()
         {
-            tcpPayload = new byte[tcpBuffer.Length - tcpHeaderLength];
-            for (int i = tcpHeaderLength; i < tcpBuffer.Length; i++)
+            tcpPayload = new byte[tcpBuffer.Length - TcpHeaderLength];
+            for (int i = TcpHeaderLength; i < tcpBuffer.Length; i++)
             {
-                tcpPayload[i - tcpHeaderLength] = tcpBuffer[i];
+                tcpPayload[i - TcpHeaderLength] = tcpBuffer[i];
             }
         }
 
-        private void setFinFlag()
+        private void SetFinFlag()
         {
             if ((tcpBuffer[13] & 1) == 0)
             {
-                isFinishedFlag = false;
+                IsFinishedFlag = false;
             }
             else
             {
-                isFinishedFlag = true;
+                IsFinishedFlag = true;
             }
         }
 
-        private void setSynFlag()
+        private void SetSynFlag()
         {
             if (((tcpBuffer[13] >> 1) & 1) == 0)
             {
-                isSynFlag = false;
+                IsSynFlag = false;
             }
             else
             {
-                isSynFlag = true;
+                IsSynFlag = true;
             }
         }
 
-        private void setResetFlag()
+        private void SetResetFlag()
         {
             if (((tcpBuffer[13] >> 2) & 1) == 0)
             {
-                isResetFlag = false;
+                IsResetFlag = false;
             }
             else
             {
-                isResetFlag = true;
+                IsResetFlag = true;
             }
         }
 
-        private void setPushFlag()
+        private void SetPushFlag()
         {
             if (((tcpBuffer[13] >> 3) & 1) == 0)
             {
-                isPushFlag = false;
+                IsPushFlag = false;
             }
             else
             {
-                isPushFlag = true;
+                IsPushFlag = true;
             }
         }
 
-        private void setAckFlag()
+        private void SetAckFlag()
         {
             if (((tcpBuffer[13] >> 4) & 1) == 0)
             {
-                isAckFlag = false;
+                IsAckFlag = false;
             }
             else
             {
-                isAckFlag = true;
+                IsAckFlag = true;
             }
         }
 
-        private void setUrgeFlag()
+        private void SetUrgeFlag()
         {
             if (((tcpBuffer[13] >> 5) & 1) == 0)
             {
-                isUrgentFlag = false;
+                IsUrgentFlag = false;
             }
             else
             {
-                isUrgentFlag = true;
+                IsUrgentFlag = true;
             }
         }
 
-        private void setEchoFlag()
+        private void SetEchoFlag()
         {
             if (((tcpBuffer[13] >> 6) & 1) == 0)
             {
-                isEchoFlag = false;
+                IsEchoFlag = false;
             }
             else
             {
-                isEchoFlag = true;
+                IsEchoFlag = true;
             }
         }
 
-        private void setRedFlag()
+        private void SetRedFlag()
         {
             if (((tcpBuffer[13] >> 7) & 1) == 0)
             {
-                isReducedFlag = false;
+                IsReducedFlag = false;
             }
             else
             {
-                isReducedFlag = true;
+                IsReducedFlag = true;
             }
         }
 
-        private void setHeaderLength()
+        private void SetHeaderLength()
         {
             offset = ((tcpBuffer[12] >> 4) & 15);
-            tcpHeaderLength = offset * 4;
+            TcpHeaderLength = offset * 4;
         }
 
-        private void setSeqNum()
+        private void SetSeqNum()
         {
-            sequenceNumber = (tcpBuffer[4] << 24)
+            SequenceNumber = (tcpBuffer[4] << 24)
                                | (tcpBuffer[5] << 16)
                                | (tcpBuffer[6] << 8)
                                | (tcpBuffer[7]);
         }
 
-        private void setAckNum()
+        private void SetAckNum()
         {
-            acknowledgmentNumber = (tcpBuffer[8] << 24)
+            AcknowledgmentNumber = (tcpBuffer[8] << 24)
                    | (tcpBuffer[9] << 16)
                    | (tcpBuffer[10] << 8)
                    | (tcpBuffer[11]);
         }
 
-        private void setSourcePort()
+        private void SetSourcePort()
         {
             //int help = internesArschloch[0];
             //int output = help << 8;
             //help = internesArschloch[1];
             //SourcePort = output | help;
 
-            sourcePort = (tcpBuffer[0] << 8) | tcpBuffer[1];
+            SourcePort = (tcpBuffer[0] << 8) | tcpBuffer[1];
         }
 
-        public string getSourcePort()
+        public string GetSourcePort()
         {
-            return sourcePort.ToString();
+            return SourcePort.ToString();
         }
 
-        private void setDestPort()
+        private void SetDestPort()
         {
-            destinationPort = (tcpBuffer[2] << 8) | tcpBuffer[3];
+            DestinationPort = (tcpBuffer[2] << 8) | tcpBuffer[3];
         }
 
 
