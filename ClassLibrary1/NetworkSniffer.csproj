@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Packets">
-      <HintPath>..\MyLib\obj\Release\Packets.dll</HintPath>
+      <HintPath>..\MyLib\bin\Debug\Packets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

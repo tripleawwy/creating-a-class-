@@ -47,32 +47,18 @@ namespace Packets
             SetSource();
             SetDest();
             GetIpPayload();
-            IsTcp();
-
-            if (Protocol==6)
+            if (Protocol == 6)
             {
                 TCP_Segment = new TCP_Segment(ipPayload, Protocol);
             }
             if (Protocol == 17)
             {
                 UDP_Datagram = new UDP_Datagram(ipPayload, Protocol);
-            }               
-                            
-        }
-
-        private void IsTcp()
-        {
-            if (Protocol==6)
-            {
-                IsTcP = true;
-            }
-            else
-            {
-                IsTcP = false;
             }
         }
 
-        private void GetIpPayload()
+
+        public void GetIpPayload()
         {
             ipPayload = new byte[TotalpacketLength - HeaderLength];
             for (int i = HeaderLength; i < TotalpacketLength; i++)
