@@ -8,10 +8,13 @@ namespace Packets
 {
     public class TCP_Segment
     {
-        byte[] internTCPBuffer;
+        //Incoming IP_Packet Payload
+        byte[] tcpBuffer;
 
+        //Outgoing TCP_Segment Payload
+        public byte[] tcpPayload;
 
-        //MainInformations
+        //MainInformation
         public int sourcePort { get; private set; }
         public int destinationPort { get; private set; }
         public int sequenceNumber { get; private set; }
@@ -32,29 +35,102 @@ namespace Packets
         public bool isFinishedFlag { get; private set; }
 
         //not implemented yet // TODO
-        private int reserved;
-        private int window;
-        private int checksum;
-        private int urgentPointer;
-        private int tcpOptions;
+        //private int reserved;
+        //private int window;
+        //private int checksum;
+        //private int urgentPointer;
+        //private int tcpOptions;
 
 
 
-        public TCP_Segment(byte[] tcpBuffer)
+
+
+        public TCP_Segment(byte[] ipPayload, int protocolType)
         {
-            internTCPBuffer = tcpBuffer;
-            setSourcePort();
-            setDestPort();
-            setSeqNum();
-            setAckNum();
-            setHeaderLength();
-            setAckFlag();
+            if (protocolType == 6) // 6 = TCP
+            {
+                tcpBuffer = ipPayload;
+                setSourcePort();
+                setDestPort();
+                setSeqNum();
+                setAckNum();
+                setHeaderLength();
+                setRedFlag();
+                setEchoFlag();
+                setUrgeFlag();
+                setAckFlag();
+                setPushFlag();
+                setResetFlag();
+                setSynFlag();
+                setFinFlag();
+                getTcpPayload();
+            }
+            else
+            {
+               
+            }
+        }
 
+        private void getTcpPayload()
+        {
+            tcpPayload = new byte[tcpBuffer.Length - tcpHeaderLength];
+            for (int i = tcpHeaderLength; i < tcpBuffer.Length; i++)
+            {
+                tcpPayload[i - tcpHeaderLength] = tcpBuffer[i];
+            }
+        }
+
+        private void setFinFlag()
+        {
+            if ((tcpBuffer[13] & 1) == 0)
+            {
+                isFinishedFlag = false;
+            }
+            else
+            {
+                isFinishedFlag = true;
+            }
+        }
+
+        private void setSynFlag()
+        {
+            if (((tcpBuffer[13] >> 1) & 1) == 0)
+            {
+                isSynFlag = false;
+            }
+            else
+            {
+                isSynFlag = true;
+            }
+        }
+
+        private void setResetFlag()
+        {
+            if (((tcpBuffer[13] >> 2) & 1) == 0)
+            {
+                isResetFlag = false;
+            }
+            else
+            {
+                isResetFlag = true;
+            }
+        }
+
+        private void setPushFlag()
+        {
+            if (((tcpBuffer[13] >> 3) & 1) == 0)
+            {
+                isPushFlag = false;
+            }
+            else
+            {
+                isPushFlag = true;
+            }
         }
 
         private void setAckFlag()
         {
-            if (((internTCPBuffer[13] >> 4) & 1) == 0)
+            if (((tcpBuffer[13] >> 4) & 1) == 0)
             {
                 isAckFlag = false;
             }
@@ -64,26 +140,62 @@ namespace Packets
             }
         }
 
+        private void setUrgeFlag()
+        {
+            if (((tcpBuffer[13] >> 5) & 1) == 0)
+            {
+                isUrgentFlag = false;
+            }
+            else
+            {
+                isUrgentFlag = true;
+            }
+        }
+
+        private void setEchoFlag()
+        {
+            if (((tcpBuffer[13] >> 6) & 1) == 0)
+            {
+                isEchoFlag = false;
+            }
+            else
+            {
+                isEchoFlag = true;
+            }
+        }
+
+        private void setRedFlag()
+        {
+            if (((tcpBuffer[13] >> 7) & 1) == 0)
+            {
+                isReducedFlag = false;
+            }
+            else
+            {
+                isReducedFlag = true;
+            }
+        }
+
         private void setHeaderLength()
         {
-            offset = (internTCPBuffer[12] >> 4);
+            offset = ((tcpBuffer[12] >> 4) & 15);
             tcpHeaderLength = offset * 4;
         }
 
         private void setSeqNum()
         {
-            sequenceNumber = (internTCPBuffer[4] << 24)
-                               | (internTCPBuffer[5] << 16)
-                               | (internTCPBuffer[6] << 8)
-                               | (internTCPBuffer[7]);
+            sequenceNumber = (tcpBuffer[4] << 24)
+                               | (tcpBuffer[5] << 16)
+                               | (tcpBuffer[6] << 8)
+                               | (tcpBuffer[7]);
         }
 
         private void setAckNum()
         {
-            acknowledgmentNumber = (internTCPBuffer[8] << 24)
-                   | (internTCPBuffer[9] << 16)
-                   | (internTCPBuffer[10] << 8)
-                   | (internTCPBuffer[11]);
+            acknowledgmentNumber = (tcpBuffer[8] << 24)
+                   | (tcpBuffer[9] << 16)
+                   | (tcpBuffer[10] << 8)
+                   | (tcpBuffer[11]);
         }
 
         private void setSourcePort()
@@ -93,7 +205,7 @@ namespace Packets
             //help = internesArschloch[1];
             //SourcePort = output | help;
 
-            sourcePort = (internTCPBuffer[0] << 8) | internTCPBuffer[1];
+            sourcePort = (tcpBuffer[0] << 8) | tcpBuffer[1];
         }
 
         public string getSourcePort()
@@ -103,7 +215,7 @@ namespace Packets
 
         private void setDestPort()
         {
-            destinationPort = (internTCPBuffer[2] << 8) | internTCPBuffer[3];
+            destinationPort = (tcpBuffer[2] << 8) | tcpBuffer[3];
         }
 
 
