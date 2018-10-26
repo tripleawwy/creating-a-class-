@@ -6,6 +6,15 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Packets", "MyLib\Packets.csproj", "{A82B26CB-4326-4554-8CB6-56F4528F667E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkSniffer", "ClassLibrary1\NetworkSniffer.csproj", "{08C95203-F15A-4F1A-89AF-824C1BC6FB6D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{66D5B784-88AB-4166-AB45-6C7D7F1EA4BB} = {66D5B784-88AB-4166-AB45-6C7D7F1EA4BB}
+		{A82B26CB-4326-4554-8CB6-56F4528F667E} = {A82B26CB-4326-4554-8CB6-56F4528F667E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageCreator", "MessageCreator\MessageCreator.csproj", "{66D5B784-88AB-4166-AB45-6C7D7F1EA4BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A82B26CB-4326-4554-8CB6-56F4528F667E} = {A82B26CB-4326-4554-8CB6-56F4528F667E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +30,10 @@ Global
 		{08C95203-F15A-4F1A-89AF-824C1BC6FB6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08C95203-F15A-4F1A-89AF-824C1BC6FB6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08C95203-F15A-4F1A-89AF-824C1BC6FB6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66D5B784-88AB-4166-AB45-6C7D7F1EA4BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66D5B784-88AB-4166-AB45-6C7D7F1EA4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66D5B784-88AB-4166-AB45-6C7D7F1EA4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66D5B784-88AB-4166-AB45-6C7D7F1EA4BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

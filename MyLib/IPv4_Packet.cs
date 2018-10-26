@@ -17,14 +17,14 @@ namespace Packets
         //MainInformation
         public string Version { get; private set; }
         public int HeaderLength { get; private set; }
-        public int TotalpacketLength { get; private set; }
+        public int TotalPacketLength { get; private set; }
         public int TTL { get; private set; }
         public int Protocol { get; private set; }
         public string SourceIpAdress { get; private set; }
         public string DestIpAdress { get; private set; }
-        public bool IsTcP { get; private set; }
         public TCP_Segment TCP_Segment;
         public UDP_Datagram UDP_Datagram;
+        public ICMP_Segment ICMP_Segment;
 
 
         //Not implemented yet  //TODO
@@ -55,13 +55,17 @@ namespace Packets
             {
                 UDP_Datagram = new UDP_Datagram(ipPayload, Protocol);
             }
+            if (Protocol == 1)  
+            {
+                ICMP_Segment = new ICMP_Segment(ipPayload, Protocol);
+            }
         }
 
 
         public void GetIpPayload()
         {
-            ipPayload = new byte[TotalpacketLength - HeaderLength];
-            for (int i = HeaderLength; i < TotalpacketLength; i++)
+            ipPayload = new byte[TotalPacketLength - HeaderLength];
+            for (int i = HeaderLength; i < TotalPacketLength; i++)
             {
                 ipPayload[i - HeaderLength] = ipv4Buffer[i];
             }
@@ -89,7 +93,7 @@ namespace Packets
 
         private void SetTotalLength()
         {
-            TotalpacketLength = (ipv4Buffer[2] << 8) | (ipv4Buffer[3]);
+            TotalPacketLength = (ipv4Buffer[2] << 8) | (ipv4Buffer[3]);
         }
 
         private void SetheaderLength()

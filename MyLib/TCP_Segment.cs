@@ -69,13 +69,13 @@ namespace Packets
                 }
                 else
                 {
-                    throw new Exception("from class TCP_Segment: ungültiger ipPayload");
+                    throw new Exception("from class TCP_Segment: invalid ipPayload");
                 }
 
             }
             else
             {
-                throw new Exception("from class TCP_Segment: is nicht tcp");
+                throw new Exception("from class TCP_Segment: invalid Protocoltype (not TCP)");
             }
         }
 
@@ -208,11 +208,6 @@ namespace Packets
 
         private void SetSourcePort()
         {
-            //int help = internesArschloch[0];
-            //int output = help << 8;
-            //help = internesArschloch[1];
-            //SourcePort = output | help;
-
             SourcePort = (tcpBuffer[0] << 8) | tcpBuffer[1];
         }
 
