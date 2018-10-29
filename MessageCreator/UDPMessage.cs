@@ -9,7 +9,7 @@ namespace MessageCreator
 {
     public class UDPMessage
     {
-        private readonly UDP_Datagram UDP_Datagram;
+        private UDP_Datagram UDP_Datagram;
 
         private string SourcePort { get; set; }
         private string DestinationPort { get; set; }
@@ -17,7 +17,7 @@ namespace MessageCreator
         private string Length { get; set; }
 
         public string ImportantMessage { get; set; }
-
+        public string UdpData { get; set; }
 
 
         public UDPMessage(IPv4_Packet ipv4packet)
@@ -29,11 +29,22 @@ namespace MessageCreator
                 SetDestPort();
                 SetChecksum();
                 SetLength();
+                SetUdpData();
                 SetImportantMessage();
             }
             else
             {
                 ImportantMessage = "UDP_Datagram not existant";
+            }
+        }
+
+
+
+        private void SetUdpData()
+        {
+            if (UDP_Datagram.udpPayload != null && UDP_Datagram.udpPayload.Length > 0)
+            {
+                UdpData = Encoding.ASCII.GetString(UDP_Datagram.udpPayload);
             }
         }
 
@@ -44,17 +55,17 @@ namespace MessageCreator
 
         private void SetLength()
         {
-            Length = "\t Source Port : " + UDP_Datagram.Length + "\t Byte";
+            Length = "\t Length : " + UDP_Datagram.Length + "\t Byte";
         }
 
         private void SetChecksum()
         {
-            Checksum = "\t Source Port : " + UDP_Datagram.Checksum;
+            Checksum = "\t Checksum : " + UDP_Datagram.Checksum;
         }
 
         private void SetDestPort()
         {
-            DestinationPort = "\t Source Port : " + UDP_Datagram.DestinationPort;
+            DestinationPort = "\t Destination Port : " + UDP_Datagram.DestinationPort;
         }
 
         private void SetSourcePort()

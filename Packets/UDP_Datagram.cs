@@ -14,20 +14,21 @@ namespace Packets
         public int DestinationPort { get; private set; }
         public int Length { get; private set; }
         public int Checksum { get; private set; }
-        public int UdpHeaderLength => 20;
-       
+        public int UdpHeaderLength { get; private set; }
+
 
         public UDP_Datagram(byte[] ipPayload, int protocol)
         {
             if (protocol==17)
             {
-                if (ipPayload.Length >= 20)
+                if (ipPayload.Length >= UdpHeaderLength)
                 {
                     udpBuffer = ipPayload;
                     SetSourcePort();
                     SetDestPort();
                     SetLength();
                     SetChecksum();
+                    SetUdpHeaderLength();
                     GetUdpPayload();
                 }
                 else
@@ -40,6 +41,11 @@ namespace Packets
                 throw new Exception("from class UDP_Datagram : invalid Protocoltype (not UDP)");
             }
 
+        }
+
+        private void SetUdpHeaderLength()
+        {
+            UdpHeaderLength = 8;
         }
 
         private void GetUdpPayload()

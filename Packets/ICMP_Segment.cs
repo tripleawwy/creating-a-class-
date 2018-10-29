@@ -14,14 +14,14 @@ namespace Packets
         public int Checksum { get; private set; }
         public int Type { get; private set; }
         public int Code { get; private set; }
-        public int ICMPHeaderLength => 20;
+        public int ICMPHeaderLength => 8;
 
 
         public ICMP_Segment(byte[] ipPayload, int protocol)
         {
             if (protocol == 1)
             {
-                if (ipPayload.Length >= 20)
+                if (ipPayload.Length >= ICMPHeaderLength)
                 {
                     icmpBuffer = ipPayload;
                     SetChecksum();

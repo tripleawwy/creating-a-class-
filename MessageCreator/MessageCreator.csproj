@@ -31,8 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Packets">
-      <HintPath>..\MyLib\bin\Release\Packets.dll</HintPath>
+    <Reference Include="MessageCreator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\NetworkSniffer\bin\Debug\MessageCreator.dll</HintPath>
+    </Reference>
+    <Reference Include="Packets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Packets\bin\Debug\Packets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
