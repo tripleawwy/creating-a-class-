@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Packets.TLS_Data;
 
 namespace Packets
 {
     public class TLS_Record
     {
+        public TLS_Handshake TLS_Handshake;
+
         //Incoming TCP_Segment Payload
         private readonly byte[] tlsbuffer;
 
@@ -25,7 +28,6 @@ namespace Packets
 
         public bool IsTls { get; set; }
 
-        //not implemented yet // TODO
 
         public TLS_Record(byte[] tcpPayload)
         {
@@ -40,6 +42,20 @@ namespace Packets
                 SetVersionMinor();
                 SetLength();
                 SetTlSState();
+                SetTlsRecordPayload();
+                if (RecordType==22)
+                {
+                    TLS_Handshake = new TLS_Handshake(tlsRecordPayload);
+                }
+            }
+        }
+
+        private void SetTlsRecordPayload()
+        {
+            tlsRecordPayload = new byte[tlsbuffer.Length - HeaderLength];
+            for (int i = HeaderLength; i < tlsbuffer.Length; i++)
+            {
+                tlsRecordPayload[i - HeaderLength] = tlsbuffer[i];
             }
         }
 

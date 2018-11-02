@@ -45,7 +45,22 @@ namespace MessageCreator
 
         private void SetRecordType()
         {
-            RecordType = "Record Type : " + TLS_Record.RecordType.ToString();
+            if (TLS_Record.RecordType == 20)
+            {
+                RecordType = "Record Type : " + "CHANGE_CIPHER_SPEC";
+            }
+            if (TLS_Record.RecordType == 21)
+            {
+                RecordType = "Record Type : " + "ALERT";
+            }
+            if (TLS_Record.RecordType == 22)
+            {
+                RecordType = "Record Type : " + "HANDSHAKE";
+            }
+            if (TLS_Record.RecordType == 23)
+            {
+                RecordType = "Record Type : " + "APPDATA";
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace NetworkSniffer
         private TCPMessage TCPMessage;
         private UDPMessage UDPMessage;
         private ICMPMessage ICMPMessage;
-        public TLSMessage TLSMessage;   
+        private TLSMessage TLSMessage;   
 
         private string PacketContent;
         public string TlsContent;
@@ -70,41 +70,5 @@ namespace NetworkSniffer
             }
             return PacketContent;
         }
-
-        //private void CreateTcpMessage()
-        //{
-        //    if (IPv4Packet != null)
-        //    {
-        //        IPv4Message = new IPv4Message(IPv4Packet);
-        //        if (IPv4Packet.Protocol == 6)
-        //        {
-        //            TCPMessage = new TCPMessage(IPv4Packet);
-        //        }
-        //    }
-        //}
-
-        //private void CreateUdpMessage()
-        //{
-        //    if (IPv4Packet != null)
-        //    {
-        //        IPv4Message = new IPv4Message(IPv4Packet);
-        //        if (IPv4Packet.Protocol == 17)
-        //        {
-        //            UDPMessage = new UDPMessage(IPv4Packet);
-        //        }
-        //    }
-        //}
-
-        //private void CreateIcmpMessage()
-        //{
-        //    if (IPv4Packet != null)
-        //    {
-        //        IPv4Message = new IPv4Message(IPv4Packet);
-        //        if (IPv4Packet.Protocol == 1)
-        //        {
-        //            ICMPMessage = new ICMPMessage(IPv4Packet);
-        //        }
-        //    }
-        //}
     }
 }
