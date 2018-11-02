@@ -15,8 +15,10 @@ namespace NetworkSniffer
         private TCPMessage TCPMessage;
         private UDPMessage UDPMessage;
         private ICMPMessage ICMPMessage;
+        public TLSMessage TLSMessage;   
 
         private string PacketContent;
+        public string TlsContent;
 
 
         public Sniffer(byte[] ethernetPayload)
@@ -26,13 +28,27 @@ namespace NetworkSniffer
             //CreateTcpMessage();
             //CreateUdpMessage();
             ShowPacketContent();
+            ShowTlsContent();
         }
 
-        
+        private void ShowTlsContent()
+        {
+            if (IPv4Packet != null)
+            {
+                if (IPv4Packet.TCP_Segment != null)
+                {
+                    if (IPv4Packet.TCP_Segment.TLS_Record !=null)
+                    {
+                        TLSMessage = new TLSMessage(IPv4Packet.TCP_Segment.TLS_Record);
+                        TlsContent = TLSMessage.ImportantTlsMessage;
+                    }
+                }
+            }
+        }
 
         public string ShowPacketContent()
         {
-            if (IPv4Packet!=null)
+            if (IPv4Packet != null)
             {
                 IPv4Message = new IPv4Message(IPv4Packet);
                 PacketContent = "\n\nIPv4 Content \n\n"+ IPv4Message.ImportantMessage;
@@ -44,7 +60,7 @@ namespace NetworkSniffer
                 else if (IPv4Packet.TCP_Segment!=null)
                 {
                     TCPMessage = new TCPMessage(IPv4Packet);
-                    PacketContent = PacketContent + "\n\n\n\t\t TCP Content \n\n\t\t " + TCPMessage.ImportantMessage;
+                    PacketContent = PacketContent + "\n\n\n\t\t TCP Content \n\n\t\t " + TCPMessage.ImportantMessage + "\n\n\n\t\t TCP Data \n\n\t\t " + TCPMessage.TcpData;
                 }
                 else if (IPv4Packet.UDP_Datagram != null)
                 {

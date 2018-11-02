@@ -53,6 +53,7 @@
     <Compile Include="IPv4Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPMessage.cs" />
+    <Compile Include="TLSMessage.cs" />
     <Compile Include="UDPMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

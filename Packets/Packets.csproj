@@ -45,6 +45,7 @@
     <Compile Include="IPv4_Packet.cs" />
     <Compile Include="TCP_Segment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TLS_Record.cs" />
     <Compile Include="UDP_Datagram.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

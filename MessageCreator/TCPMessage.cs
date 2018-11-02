@@ -15,10 +15,11 @@ namespace MessageCreator
         private string DestinationPort { get; set; }
         private string SequenceNumber { get; set; }
         private string AcknowledgmentNumber { get; set; }
-        private string Flag { get; set; }
+        private string Flags { get; set; }
         private string TcpHeaderLength { get; set; }
 
         public string ImportantMessage { get; set; }
+        public string TcpData { get; set; }
 
         public TCPMessage(IPv4_Packet ipv4packet)
         {
@@ -30,8 +31,10 @@ namespace MessageCreator
                 SetSeqNum();
                 SetAckNum();
                 SetTcpHeaderLength();
-                SetFlag();
+                SetFlags();
+                SetTcpData();
                 SetImportantMessage();
+
             }
             else
             {
@@ -39,44 +42,53 @@ namespace MessageCreator
             }
         }
 
-        private void SetImportantMessage()
+        private void SetTcpData()
         {
-            ImportantMessage = SourcePort + DestinationPort + SequenceNumber + AcknowledgmentNumber + Flag;
+            if (TCP_Segment.tcpPayload != null && TCP_Segment.tcpPayload.Length >= 0)
+            {
+                TcpData = Encoding.ASCII.GetString(TCP_Segment.tcpPayload);
+            }
         }
 
-        private void SetFlag()
+        private void SetImportantMessage()
         {
+            ImportantMessage = SourcePort + DestinationPort + SequenceNumber + AcknowledgmentNumber + Flags;
+        }
+
+        private void SetFlags()
+        {
+            Flags = "\t Flags : ";
             if (TCP_Segment.IsReducedFlag == true)
             {
-                Flag = "\t Flag : " + "C";
+                Flags = Flags + " C";
             }
-            else if (TCP_Segment.IsEchoFlag == true)
+            if (TCP_Segment.IsEchoFlag == true)
             {
-                Flag = "\t Flag : " + "E";
+                Flags = Flags + " E";
             }
-            else if (TCP_Segment.IsUrgentFlag == true)
+            if (TCP_Segment.IsUrgentFlag == true)
             {
-                Flag = "\t Flag : " + "U";
+                Flags = Flags + " U";
             }
-            else if (TCP_Segment.IsAckFlag == true)
+            if (TCP_Segment.IsAckFlag == true)
             {
-                Flag = "\t Flag : " + "A";
+                Flags = Flags + " A";
             }
-            else if (TCP_Segment.IsPushFlag == true)
+            if (TCP_Segment.IsPushFlag == true)
             {
-                Flag = "\t Flag : " + "P";
+                Flags = Flags + " P";
             }
-            else if (TCP_Segment.IsResetFlag == true)
+            if (TCP_Segment.IsResetFlag == true)
             {
-                Flag = "\t Flag : " + "R";
+                Flags = Flags + " R";
             }
-            else if (TCP_Segment.IsFinishedFlag == true)
+            if (TCP_Segment.IsFinishedFlag == true)
             {
-                Flag = "\t Flag : " + "S";
+                Flags = Flags + " S";
             }
-            else if (TCP_Segment.IsReducedFlag == true)
+            if (TCP_Segment.IsReducedFlag == true)
             {
-                Flag = "\t Flag : " + "F";
+                Flags = Flags + " F";
             }
         }
 

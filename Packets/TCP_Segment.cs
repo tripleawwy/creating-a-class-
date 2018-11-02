@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace Packets
 {
     public class TCP_Segment
-    {       
+    {
+        public TLS_Record TLS_Record;
+
         //Incoming IP_Packet Payload
         private byte[] tcpBuffer;
 
@@ -17,8 +19,8 @@ namespace Packets
         //MainInformation
         public int SourcePort { get; private set; }
         public int DestinationPort { get; private set; }
-        public int SequenceNumber { get; private set; }
-        public int AcknowledgmentNumber { get; private set; }
+        public uint SequenceNumber { get; private set; }
+        public uint AcknowledgmentNumber { get; private set; }
 
         //HeaderLength instead of offset
         private int offset;
@@ -66,12 +68,18 @@ namespace Packets
                     SetSynFlag();
                     SetFinFlag();
                     GetTcpPayload();
+                    if (tcpPayload != null 
+                        && tcpPayload.Length >= 5 
+                        && (tcpPayload[0]== 20 | tcpPayload[0] == 21 | tcpPayload[0] == 22 | tcpPayload[0] == 23) 
+                        && tcpPayload[1]==3 )
+                    {
+                        TLS_Record = new TLS_Record(tcpPayload);
+                    }
                 }
                 else
                 {
                     throw new Exception("from class TCP_Segment: invalid ipPayload");
                 }
-
             }
             else
             {
@@ -192,18 +200,20 @@ namespace Packets
 
         private void SetSeqNum()
         {
-            SequenceNumber = (tcpBuffer[4] << 24)
-                               | (tcpBuffer[5] << 16)
-                               | (tcpBuffer[6] << 8)
-                               | (tcpBuffer[7]);
+            SequenceNumber = BitConverter.ToUInt32(tcpBuffer, 4);
+            //SequenceNumber = Convert.ToUInt32((tcpBuffer[4] << 24)
+            //                   | (tcpBuffer[5] << 16)
+            //                   | (tcpBuffer[6] << 8)
+            //                   | (tcpBuffer[7]));
         }
 
         private void SetAckNum()
         {
-            AcknowledgmentNumber = (tcpBuffer[8] << 24)
-                   | (tcpBuffer[9] << 16)
-                   | (tcpBuffer[10] << 8)
-                   | (tcpBuffer[11]);
+            AcknowledgmentNumber = BitConverter.ToUInt32(tcpBuffer, 8);
+            //AcknowledgmentNumber = (tcpBuffer[8] << 24)
+            //       | (tcpBuffer[9] << 16)
+            //       | (tcpBuffer[10] << 8)
+            //       | (tcpBuffer[11]);
         }
 
         private void SetSourcePort()
