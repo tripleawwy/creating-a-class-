@@ -10,6 +10,10 @@ namespace Packets.TLS_Data
     public class TLS_Handshake
     {
         public Client_Hello Client_Hello;
+        public Server_Hello Server_Hello;
+        public Certificate Certificate;
+        public Server_Key_Exchange Server_Key_Exchange;
+        public Certificate_Request Certificate_Request;
 
         //Incoming TLS_Record Payload
         private readonly byte[] handshakeBuffer;
@@ -21,6 +25,7 @@ namespace Packets.TLS_Data
         public string Type { get; set; }
         public int Length { get; set; }
         public int HeaderLength => 4;
+        public string HandshakeMessage { get; set; }
 
         public TLS_Handshake(byte[] tlsPayload)
         {
@@ -31,6 +36,43 @@ namespace Packets.TLS_Data
             if (Type == "CLIENT_HELLO")
             {
                 Client_Hello = new Client_Hello(handshakePayload);
+                HandshakeMessage = Client_Hello.HelloMessage;
+            }
+            if (Type == "SERVER_HELLO")
+            {
+                Server_Hello = new Server_Hello(handshakePayload);
+                HandshakeMessage = Server_Hello.HelloMessage;
+            }
+            if (Type == "CERTIFICATE")
+            {
+                Certificate = new Certificate(handshakePayload);
+                HandshakeMessage = Certificate.CertMessage;
+            }
+            if (Type == "SERVER_KEY_EXCHANGE")
+            {
+                Server_Key_Exchange = new Server_Key_Exchange(handshakePayload);
+                HandshakeMessage = Server_Key_Exchange.ServerKeyMessage;
+            }
+            if (Type == "CERTIFICATE_REQUEST")
+            {
+                Certificate_Request = new Certificate_Request(handshakePayload);
+                HandshakeMessage = Certificate_Request.CertRequestMessage;
+            }
+            if (Type == "SERVER_DONE")
+            {
+
+            }
+            if (Type == "CERTIFICATE_VERIFY")
+            {
+
+            }
+            if (Type == "CLIENT_KEY_EXCHANGE")
+            {
+
+            }
+            if (Type == "FINISHED")
+            {
+
             }
         }
 
@@ -74,7 +116,7 @@ namespace Packets.TLS_Data
                     Type = "SERVER_DONE";
                     break;
                 case 15:
-                    Type = "CERTIFICATE VERIFY";
+                    Type = "CERTIFICATE_VERIFY";
                     break;
                 case 16:
                     Type = "CLIENT_KEY_EXCHANGE";

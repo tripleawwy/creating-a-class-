@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Packets.TLS_Data.Handshake_Types
 {
-    public class Client_Hello
+    public class Server_Hello
     {
         //Incoming Handshake Payload
-        private readonly byte[] client_helloBuffer;
+        private readonly byte[] server_helloBuffer;
 
         //MainInformation
         public string Version { get; set; }
@@ -19,70 +19,59 @@ namespace Packets.TLS_Data.Handshake_Types
         public string CompressionMethod { get; set; }
         private int RandomLength => 32;
         public int SessionLength { get; set; }
-        public int CipherSuiteLength { get; set; }
-        public int CipherSuiteCount => CipherSuiteLength / 2;
+        public int ExtensionLength { get; set; }
 
         //TODO :
         //public string Extensions { get; set; }
 
-
         public string HexMessage { get; set; }
         public string HelloMessage => "\nversion : " + Version
-            + "\nRNG Number : " + Random 
-            + "\nsession id : " + SessionID 
-            + "\nsession length : " + SessionLength 
-            + "\nCipherSuiteCount : " + CipherSuiteCount 
-            + "\nCipherSuites : "+ cipherList                        
-            + "\nCompressionMethod : " + CompressionMethod
+            + "\nRNG Number : " + Random
+            + "\nsession id : " + SessionID
+            + "\nsession length : " + SessionLength
+            + "\nCipher Suites : " + cipherList
+            + "\nCompression Method : " + CompressionMethod
+            + "\nExtension Length : " + ExtensionLength
             + "\n\nHexmessage : " + HexMessage;
-      
 
-        public Client_Hello(byte[] handshakePayload)
+        public Server_Hello(byte [] handshakePayload)
         {
-            client_helloBuffer = handshakePayload;
+            server_helloBuffer = handshakePayload;
             SetVersion();
             SetRandom();
             SetSessionLength();
             SetSessionID();
             SetTLSPayload();
-            SetCipherSuiteLength();
             ShowCipherSuites();
             SetMethod();
+            SetExtensionLength();
             //SetExtensions();
+        }
+
+        private void SetExtensionLength()
+        {
+            int startPos = SessionLength + RandomLength + 6;
+            ExtensionLength = server_helloBuffer[startPos] << 8 | server_helloBuffer[startPos+1];
         }
 
         private void ShowCipherSuites()
         {
-            int i = 0;
-            int startPos = SessionLength + RandomLength + 5;
-            do
-            {
-                cipherList = cipherList + "0x" + String.Format("{0:x6}", client_helloBuffer[startPos] << 8 | client_helloBuffer[startPos + 1]) + " ";
-                startPos = startPos + 2;
-                i++;
-            } while (i<CipherSuiteCount);
-
+            int startPos = SessionLength + RandomLength + 3;
+            cipherList = cipherList + "0x" + String.Format("{0:x6}", server_helloBuffer[startPos] << 8 | server_helloBuffer[startPos + 1]) + " ";
         }
 
         private void SetTLSPayload()
         {
-            for (int i = 0; i < client_helloBuffer.Length; i++)
+            for (int i = 0; i < server_helloBuffer.Length; i++)
             {
-                HexMessage = HexMessage + client_helloBuffer[i].ToString("X2") + " ";                
+                HexMessage = HexMessage + server_helloBuffer[i].ToString("X2") + " ";
             }
         }
 
-
         private void SetMethod()
         {
-            int startPos = SessionLength + RandomLength + CipherSuiteLength + 6;
-            CompressionMethod = client_helloBuffer[startPos].ToString();
-        }
-
-        private void SetCipherSuiteLength()
-        {
-            int startPos = SessionLength + RandomLength + 3;
-            CipherSuiteLength = client_helloBuffer[startPos] << 8 | client_helloBuffer[startPos + 1];
+            int startPos = SessionLength + RandomLength + 5;
+            CompressionMethod = server_helloBuffer[startPos].ToString();
         }
 
         private void SetSessionID()
@@ -90,32 +79,32 @@ namespace Packets.TLS_Data.Handshake_Types
             int startPos = 35;
             for (int i = 0; i < SessionLength; i++)
             {
-                SessionID = SessionID + client_helloBuffer[i + startPos].ToString("x2") + " ";
+                SessionID = SessionID + server_helloBuffer[i + startPos].ToString("x2") + " ";
             }
         }
 
         private void SetSessionLength()
         {
             int startPos = 34;
-            SessionLength = client_helloBuffer[startPos];
+            SessionLength = server_helloBuffer[startPos];
         }
 
         private void SetRandom()
         {
-            
+
             byte timeStamp = 4;
             int startPos = timeStamp + 2;
             byte randomLength = 28;
             for (int i = 0; i < randomLength; i++)
             {
-                Random = Random + client_helloBuffer[i+startPos].ToString("x2") + " ";
+                Random = Random + server_helloBuffer[i + startPos].ToString("x2") + " ";
             }
         }
 
         private void SetVersion()
         {
             string result;
-            result = client_helloBuffer[0] + "." + client_helloBuffer[1];
+            result = server_helloBuffer[0] + "." + server_helloBuffer[1];
             switch (result)
             {
                 case "3.0":
